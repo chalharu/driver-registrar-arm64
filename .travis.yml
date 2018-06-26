@@ -1,0 +1,33 @@
+language: generic
+sudo: true
+
+os:
+- linux
+
+before_script:
+- curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+- sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+- sudo apt-get -yq update
+- sudo apt-get -yq install qemu-user-static binfmt-support docker-ce
+- sudo docker login -u mitsu1986 -p ${DOCKERHUB_PASS}
+
+script:
+- sudo docker build -t mitsu1986/csi-nfsplugin-arm64 .
+
+after_success:
+- |
+  if [ "${TRAVIS_OS_NAME}" = "linux" ] &&
+     [ "${TRAVIS_BRANCH}" = "master" ] &&
+     [ "${TRAVIS_PULL_REQUEST}" = "false" ] &&
+     [ "${TRAVIS_EVENT_TYPE}" = "push" ]; then
+    sudo docker push mitsu1986/csi-nfsplugin-arm64
+  fi
+
+notifications:
+  email:
+    on_success: never
+    on_failure: always
+
+env:
+  global:
+    secure: gUD0sQ8KES6tE/wXvo/HbVPG/QQXD3s+5iIWk1gD+iuWeWn39xzptF0RMD92CxHopDyvDdgUjreAdqdBbuaNovMRGOWC+XIEUmICWj6B5R+PwS4Cd/DFXaGvJ60WWwz3EUvsi93ikXaFpniqTBrIFI3h9VLlA6bHb1nipoWSQnJKUQJXMcPcm4CXC/9T9sVwJty+KzCWcvMkjIaB1iJ0ezJmLj5aZz/xCMszNiZ5lu8D2Y4uoea1KS7MhfhUNhdwqN3ml1rX/7mfE7rT+8M2hKxr8IMu6pw22z7a24eeGQG7mhcg5zKB94JAVdcjJTUfV1pzyLjEWkKinJkPWhdCF5IAcs5i7cwJGYiy9HiJoU9Bj9Pzzk46l+dsIpvFz7ThIS1xSPS+FfeOZ3VE9TN0d4Dw1JwmI3R41utSjSq/7TvuqbMnqNSEprv1OYHbr4rJTcrleS2L8Y00pWDRcICU6K8fzCMvXnzdoBeoI+QAk7JULx1CKkGWE3+Y6t9uq3R/sG+YrCw8x4KY3SbOzhxqU4DVU7h6VJdT5HiHBGPaLoH/a+wzqBeAkQi/h/imfxvIKYidUSvCRL4ss49DHSQbEYM2wqfdPnhJ5lSU703049mNfG8ud8n7s6YX/8hGFecmdVEXZ+Yv08g0ZTnlXDuSdw2vjZpabcB75Z0d39YGAhw=
