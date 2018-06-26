@@ -22,4 +22,5 @@ FROM arm64v8/alpine:3.7
 LABEL description="CSI Driver registrar"
 
 COPY --from=build-env /root/go/src/github.com/kubernetes-csi/driver-registrar/bin/driver-registrar driver-registrar
+RUN mkdir -p /registration
 ENTRYPOINT ["/driver-registrar"]
