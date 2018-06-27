@@ -14,9 +14,10 @@ RUN apt-get -yq install gcc-aarch64-linux-gnu git make gcc bc device-tree-compil
 RUN apt-get -yq clean
 RUN go get -d github.com/kubernetes-csi/driver-registrar || true
 RUN cd /root/go/src/github.com/kubernetes-csi/driver-registrar && \
+    git checkout refs/tags/v0.3.0 && \
     REV=$(git describe --long --match='v*' --dirty) && \
     mkdir -p bin && \
-    CGO_ENABLED=0 go build -a -ldflags "-X main.version=v0.2.0-9-$REV -extldflags '-static'" -o ./bin/driver-registrar ./cmd/driver-registrar
+    CGO_ENABLED=0 go build -a -ldflags "-X main.version=$REV -extldflags '-static'" -o ./bin/driver-registrar ./cmd/driver-registrar
 RUN cd / && \
     wget https://github.com/multiarch/qemu-user-static/releases/download/v2.12.0/x86_64_qemu-aarch64-static.tar.gz && \
     tar zxvf x86_64_qemu-aarch64-static.tar.gz

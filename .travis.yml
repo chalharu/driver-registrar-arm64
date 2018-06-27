@@ -12,7 +12,7 @@ before_script:
 - sudo docker login -u mitsu1986 -p ${DOCKERHUB_PASS}
 
 script:
-- sudo docker build -t mitsu1986/driver-registrar-arm64 .
+- sudo docker build -t mitsu1986/driver-registrar-arm64:v0.3.0 .
 
 after_success:
 - |
@@ -20,7 +20,7 @@ after_success:
      [ "${TRAVIS_BRANCH}" = "master" ] &&
      [ "${TRAVIS_PULL_REQUEST}" = "false" ] &&
      [ "${TRAVIS_EVENT_TYPE}" = "push" ]; then
-    sudo docker push mitsu1986/driver-registrar-arm64
+    sudo docker push mitsu1986/driver-registrar-arm64:v0.3.0
   fi
 
 notifications:
